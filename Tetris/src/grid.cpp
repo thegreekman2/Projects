@@ -1,5 +1,7 @@
 #include "grid.h"
 #include <iostream>
+#include "colors.h"
+#include "constants.h"
 
 
 Grid::Grid()
@@ -35,20 +37,6 @@ void Grid::Print()
     }
 }
 
-std::vector<Color> Grid::GetCellColors()
-{
-    Color darkGrey = {26, 31, 40, 255};
-    Color green  = {47, 230, 23, 255};
-    Color red  = {232,18,18,255};
-    Color orange  = {226,116,17,255};
-    Color yellow  = {237,234,4,255};
-    Color purple  = {166,0,247,255};
-    Color cyan  = {21,204,209,255};
-    Color blue  = {13,64,216,255};
-
-    return { darkGrey, green, red, orange, yellow, purple, cyan, blue};
-}
-
 void Grid::Draw()
 {
     for(int row = 0; row < numRows; row++)
@@ -56,7 +44,73 @@ void Grid::Draw()
         for (int column = 0; column < numCols; column++)
         {
             int cellValue = grid[row][column];
-            DrawRectangle(column * cellSize + 1, row * cellSize + 1, cellSize - 1, cellSize - 1, colors[cellValue]);
+            DrawRectangle(column * cellSize + 1 + gridOffset/2, row * cellSize + 1 + gridOffset/2, cellSize - 1, cellSize - 1, colors[cellValue]);
         }
+    }
+}
+
+bool Grid::IsCellOutside(int row, int column)
+{
+    if(row >= 0 && row < numRows && column >= 0 && column < numCols)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Grid::IsCellEmpty(int row, int col)
+{
+    if(grid[row][col] == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+int Grid::ClearFullRows()
+{
+    int completed = 0;
+    for(int row = numRows - 1; row >= 0; row--)
+    {
+        if(isRowFull(row))
+        {
+            clearRow(row);
+            completed++;
+            
+        }
+        else if (completed > 0)
+        { 
+            MoveRowDown(row, completed);
+        }
+    }
+    return completed;
+}
+
+bool Grid::isRowFull(int row)
+{
+    for(int col = 0; col < numCols; col++)
+    {
+        if(grid[row][col] == 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Grid::clearRow(int row)
+{
+    for(int col = 0; col < numCols; col++)
+    {
+        grid[row][col] = 0;
+    }
+}
+
+void Grid::MoveRowDown(int row, int numRows)
+{
+    for(int col = 0; col < numCols; col++)
+    {
+        grid[row + numRows][col] = grid[row][col];
+        grid[row][col] = 0;
     }
 }

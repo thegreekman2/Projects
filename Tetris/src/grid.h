@@ -2,6 +2,8 @@
 #include <vector>
 #include <raylib.h>
 
+
+
 class Grid
 {
 public:
@@ -10,9 +12,16 @@ public:
     int grid[20][10];
     void Print();
     void Draw();
+    bool IsCellOutside(int row, int column);
+    bool IsCellEmpty(int row, int col);
+    int ClearFullRows();
+
+    
 
 private:
-    std::vector<Color> GetCellColors();
+    bool isRowFull(int row);
+    void clearRow(int row);
+    void MoveRowDown(int row, int numRows);
     int numRows;
     int numCols;
     int cellSize;
@@ -20,4 +29,6 @@ private:
 
 
 };
+
+
 
